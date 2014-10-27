@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<link type=text/css rel=stylesheet href=pong.css>
+<script src=jquery.min.js></script>
+<script src=d3.js></script>
+<script src=font.js></script>
+<svg width=800 height=600>
+	<rect width=800 height=600 fill=#000000></rect>
+	<rect id=leftPaddle class=paddle></rect>
+	<rect id=rightPaddle class=paddle></rect>
+	<g id=leftScore transform="translate(200, 40)">
+		<rect width=10 height=10 fill=#ffffff></rect>
+		<rect width=10 height=10 cy=20 fill=#ffffff></rect>
+	</g>
+	<g id=rightScore transform="translate(600, 40)">
+	</g>
+	<rect id=ball width=10 height=10 fill=#ffffff></rect>
+	<g id=blackStripes></g>
+</svg>
+<script src=pong.js></script>
