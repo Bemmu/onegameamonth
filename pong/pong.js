@@ -19,10 +19,20 @@ var rightPaddleHeight = 100;
 var rightPaddleWidth = 10;
 var leftScore = 0;
 var rightScore = 0;
+var paused = false;
+var frame = 0;
+var waviness = 0.15;
+var wavinessHeight = 5;
 
 function resetBall() {
 	ballY = height/2 - ballHeight/2;
 	ballX = width/2 - ballWidth/2;
+	paused = true;
+	setTimeout(function () {
+		paused = false
+	}, 1000);
+	waviness = Math.random() * 0.15;
+	wavinessHeight = Math.random() * 10;
 }
 
 function tr(x, y) {
@@ -64,6 +74,11 @@ function ballWallCollisions() {
 	if (ballX < 0) {
 		resetBall();
 		rightScore++;
+		if (rightScore >= 10) {
+			alert("You lost");
+			rightScore = 0;
+			leftScore = 0;
+		}
 		ballXS *= -1;
 	}
 	if (ballY < 0) {
@@ -73,6 +88,11 @@ function ballWallCollisions() {
 	if (ballX > width - ballWidth) {
 		resetBall();
 		leftScore++;
+		if (leftScore >= 10) {
+			alert("You won");
+			rightScore = 0;
+			leftScore = 0;
+		}
 		ballXS *= -1;
 	}
 	if (ballY > height - ballHeight) {
@@ -102,15 +122,21 @@ function draw() {
 	updateScore(rightScore, "#rightScore");
 }
 
+
 function ai() {
-	rightPaddleY = ballY - rightPaddleHeight/2;
+	frame += 1;
+	var losing = Math.max(0.01, (leftScore - rightScore) * 0.05);
+	var stupidity = (1 - losing) + Math.sin(frame * 0.1) * losing;
+	rightPaddleY = Math.sin(Math.cos(frame*waviness))*wavinessHeight + rightPaddleY * stupidity + (ballY - rightPaddleHeight/2) * (1 - stupidity);
 }
 
 function gameLoop() {
 	var currentTime = (new Date()).getTime();
 	delta = (currentTime - lastTime) / 1000;
 	lastTime = currentTime;
-	physics(delta);
+	if (!paused) {
+		physics(delta);
+	}
 	ai();
 	draw();
 	window.requestAnimationFrame(gameLoop);
